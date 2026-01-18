@@ -2,8 +2,21 @@ import { TextField, InputAdornment, IconButton } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import {
+  getScheduledEmails,
+  getSentEmails,
+} from "../../api/email.api";
+export default function Header({setLoading}: any) {
 
-export default function Header() {
+  const handleRefresh = () => {
+    setLoading(true);
+    getScheduledEmails();
+    getSentEmails();
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+  }
+
   return (
     <TextField
       placeholder="Search"
@@ -24,7 +37,7 @@ export default function Header() {
             </InputAdornment>
             <InputAdornment position="end">
               <IconButton edge="end" size="small" aria-label="refresh">
-                <RefreshIcon />
+                <RefreshIcon onClick={handleRefresh} />
               </IconButton>
             </InputAdornment>
           </>

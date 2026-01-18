@@ -16,6 +16,7 @@ import {
 import { formatTime } from "../../utils/formatTime";
 import Header from "../layout/Header";
 import { useNavigate } from "react-router-dom";
+import truncate from "html-truncate";
 
 export default function EmailList({ type }: any) {
   const navigate = useNavigate();
@@ -30,50 +31,57 @@ export default function EmailList({ type }: any) {
   }, [type]);
 
   if (loading) return <Loading />;
-  if (!emails.length) return <EmptyState text="No emails found" />;
+  if (!emails.length) return <EmptyState text="No emails found" setLoading={setLoading}/>;
 
   return (
     <>
-    <Header></Header>
+    <Header setLoading={setLoading}></Header>
     <Box>
     <br />
-      {emails.map((email) => (
+      {emails.map((email) => 
+      (
         <Box
           key={email.id}
-          sx={{ cursor: "pointer", "&:hover": { backgroundColor: "#f5f5f5" , paddingLeft:"10px"} }}
+          sx={{ cursor: "pointer", paddingLeft:"5px", "&:hover": { backgroundColor: "#f5f5f5"} }}
           onClick={() => navigate(`/viewMail/${email.id}`)
 }
-          // display="flex"
-          // justifyContent="space-between"
-          // alignItems="center"
+        
         >
           <Box
             display="flex"
             justifyContent="space-between"
             alignItems="center"
-            sx={{ width: "100%" }}
+            sx={{ width: "100%" , height:"8vh"}}
+            
           >
+            <Box>
+
             <Typography fontWeight={600}>
               To: {email.to_email.split("@")[0]}
             </Typography>
+            </Box>
 
             <Box
               display="flex"
-              // justifyContent="space-between"
+              justifyContent="space-between"
               alignItems="center"
-              sx={{ width: "70%" }}
+              sx={{width:"75%",}}
             >
-
+<Box       display="flex"
+              justifyContent="space-between"
+              alignItems="center"         sx={{width:"auto",}}
+>
               <Chip
                 label={
                   type === "scheduled"
                     ? formatTime(email.scheduled_at)
                     : "Sent"
                 }
+                // variant={"filled"}
                 variant={type === "scheduled" ?"":"filled"}
                 color={type === "scheduled" ? "warning":""}
                 size="small"
-                sx={{ width: type === "scheduled" ? "10vw" : "4vw"}}
+                sx={{ width: type === "scheduled" ? "16vw" : "4vw"}}
 
                 icon={type === "scheduled" ? <AccessTimeIcon />:""}
               />
@@ -85,14 +93,14 @@ export default function EmailList({ type }: any) {
                 color="text.secondary"
                 ml={1}
                 component="div"
-                dangerouslySetInnerHTML={{ __html: email.body.substring(0, 31) + "..." }}
+                dangerouslySetInnerHTML={{ __html: truncate(email.body, 31, { ellipsis: "..." })}}
               />
-
+</Box>
               <Box
                display="flex"
               justifyContent="flex-end"
               alignItems="center"
-              sx={{ width: "25%" }}
+              sx={{marginRight:"20px"}}
               >
                 <StarOutlineIcon sx={{color:"lightgrey" , fontSize:"20px"}}></StarOutlineIcon>
               </Box>
@@ -100,7 +108,7 @@ export default function EmailList({ type }: any) {
             </Box>
           </Box>
 
-          <Divider sx={{width:"100%"}} />
+          <Divider sx={{width:"100%" }} />
         </Box>
       ))}
     </Box>

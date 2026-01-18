@@ -1,5 +1,12 @@
 import { db } from "../../config/db";
 
+// export interface Attachment {
+//   file_name: string;
+//   file_type: string;
+//   file_size: number;
+//   file_url: string;
+// }
+
 export class EmailRepository {
   async create(data: any) {
     const [result] = await db.query(
@@ -34,4 +41,12 @@ export class EmailRepository {
       [id]
     );
   }
+  // async getAttachments(emailId: number): Promise<Attachment[]> {
+  //   const [rows] = await db.query(
+  //     "SELECT * FROM email_attachments WHERE email_id = ?",
+  //     [emailId]
+  //   );
+  //   // @ts-ignore
+  //   return rows as Attachment[];
+  // }
 }

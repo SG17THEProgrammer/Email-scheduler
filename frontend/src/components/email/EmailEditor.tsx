@@ -42,7 +42,7 @@ export default function EmailEditor({ value, onChange }: Props) {
         backgroundColor: "#fff",
       }}
     >
-        <Typography sx={{padding:"10px 10px 0px 10px" , color:"grey"}}>Type Your Reply... </Typography>
+      <Typography sx={{ padding: "10px 10px 0px 10px", color: "grey" }}>Type Your Reply... </Typography>
       {/* Toolbar */}
       <Stack direction="row" spacing={1} p={1} borderBottom="1px solid #eee">
         <IconButton size="small" onClick={() => editor.chain().focus().toggleBold().run()}>
@@ -63,8 +63,18 @@ export default function EmailEditor({ value, onChange }: Props) {
       </Stack>
 
       {/* Editor */}
-      <Box sx={{ p: 2, minHeight: 180 }}>
-        <EditorContent editor={editor} />
+      <Box
+        sx={{
+          p: 2,
+          cursor: "text",
+          minHeight: 150,
+          "& .ProseMirror": {
+            outline: "none",       
+          },
+        }}
+        onClick={() => editor?.commands.focus()} 
+      >
+        <EditorContent required editor={editor} />
       </Box>
     </Box>
   );

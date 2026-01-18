@@ -66,10 +66,10 @@ const handleLogin = async()=>{
           </Typography>
         </Divider>
 
-        <TextField label="Email ID" variant="outlined" fullWidth sx={{ mt: 2 }} onChange={handleInputChange}  value={userDet.email} name={"email"}></TextField>
-        <TextField label="Password" variant="outlined" fullWidth sx={{ mt: 2 }} onChange={handleInputChange} value={userDet.password} name={"password"}></TextField>
+        <TextField label="Email ID" variant="outlined" fullWidth sx={{ mt: 2 }} onChange={handleInputChange}  value={userDet.email} name={"email"} disabled></TextField>
+        <TextField label="Password" variant="outlined" fullWidth sx={{ mt: 2 }} onChange={handleInputChange} value={userDet.password} name={"password"} disabled></TextField>
 
-          <Button variant="contained" fullWidth sx={{ mt: 2 }} color="success" onClick={handleLogin}>
+          <Button variant="contained" fullWidth sx={{ mt: 2 }} color="success" onClick={handleLogin} disabled>
             Login
           </Button>
       </Card>

@@ -1,5 +1,11 @@
 import nodemailer from "nodemailer";
 
+type MailAttachment = {
+  filename: string;
+  path: string;
+  contentType?: string;
+};
+
 const transporterPromise = nodemailer.createTestAccount().then((account) =>
   nodemailer.createTransport({
     host: account.smtp.host,
@@ -16,10 +22,12 @@ export async function sendEmail({
   to,
   subject,
   body,
+   attachments,
 }: {
   to: string;
   subject: string;
   body: string;
+  attachments?: MailAttachment[];
 }) {
   const transporter = await transporterPromise;
 
@@ -30,6 +38,7 @@ export async function sendEmail({
     to,
     subject,
     html: body,
+    attachments,
   });
 
   console.log("📧 Email sent:", nodemailer.getTestMessageUrl(info));

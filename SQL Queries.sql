@@ -32,6 +32,30 @@ show tables;
 select * from emails;
 select * from senders;
 select * from users;
+select * from email_attachments;
+
+delete from emails;
+delete from senders;
+delete from users;
+delete from email_attachments;
+
+
+CREATE TABLE email_attachments (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  email_id BIGINT NOT NULL,
+  file_name VARCHAR(255),
+  file_type VARCHAR(100),
+  file_size INT,
+  file_url TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+  CONSTRAINT fk_email
+    FOREIGN KEY (email_id)
+    REFERENCES emails(id)
+    ON DELETE CASCADE
+);
+
+drop table email_attachments;
 
 alter table users 
 add column name varchar(40);

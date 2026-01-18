@@ -11,27 +11,29 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import ImageIcon from "@mui/icons-material/Image";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getEmailById, getSenderById } from "../../api/email.api";
 import { useAuth } from "../../auth/useAuth";
-
-interface Attachment {
-  name: string;
-  size: string;
-  url: string;
-}
+import { formatTime } from "../../utils/formatTime";
 
 interface Mail {
   id: string;
+  sender_id: number;
   subject: string;
-  fromName: string;
-  fromEmail: string;
-  to: string;
+  name: string;
+  email: string;
+  to_email: string;
   date: string;
-  bodyHtml: string;
-  attachments?: Attachment[];
+  body: string;
+  created_at: string;
+  attachments?: any[];
+}
+
+interface Sender {
+  id: number;
+  name: string;
+  email: string;
 }
 
 export default function MailViewer() {
@@ -40,7 +42,7 @@ export default function MailViewer() {
   const navigate = useNavigate();
 
   const [mail, setMail] = useState<Mail | null>(null);
-  const [sender, setSender] = useState(null);
+  const [sender, setSender] = useState<Sender | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -71,9 +73,9 @@ export default function MailViewer() {
       try {
         setLoading(true);
         console.log(mail?.sender_id);
-        const res = await getSenderById(mail?.sender_id);
+        const res = await getSenderById(mail!.sender_id.toString());
         console.log(res);
-        setSender(res.data[0]);
+        setSender(res.data[0]); 
       } catch (err) {
         setError("Failed to load sender");
       } finally {
@@ -84,7 +86,6 @@ export default function MailViewer() {
     getSender();
   }, [mail?.sender_id]);
 
-  /* ------------------ STATES ------------------ */
 
   if (loading) {
     return (
@@ -103,7 +104,6 @@ export default function MailViewer() {
   }
 
 
-  /* ------------------ UI ------------------ */
 
   return (
     <Box height="100%" bgcolor="#fff">
@@ -150,7 +150,7 @@ export default function MailViewer() {
         </Box>
 
         <Typography variant="body2" color="text.secondary">
-          {mail.created_at}
+          {formatTime(mail.created_at)}
         </Typography>
       </Stack>
 
@@ -166,7 +166,8 @@ export default function MailViewer() {
       </Box>
 
       {/* Attachments */}
-      {mail.attachments?.length > 0 && (
+      
+      {/* {mail.attachments?.length > 0 && (
         <Box px={6} pb={4}>
           <Stack direction="row" spacing={2}>
             {mail.attachments.map((file, idx) => (
@@ -203,7 +204,7 @@ export default function MailViewer() {
             ))}
           </Stack>
         </Box>
-      )}
+      )} */}
     </Box>
   );
 }
