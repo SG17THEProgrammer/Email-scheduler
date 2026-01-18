@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import { useAuth } from "./auth/useAuth";
+import MailViewer from "./components/email/MailViewer";
 
 export default function App() {
   const { user } = useAuth();
@@ -16,6 +17,7 @@ export default function App() {
         path="/"
         element={user ? <Dashboard /> : <Navigate to="/login" />}
       />
+      <Route path="/viewMail" element={<MailViewer />} />
     </Routes>
   );
 }
