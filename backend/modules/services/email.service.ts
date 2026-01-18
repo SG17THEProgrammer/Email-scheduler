@@ -105,7 +105,7 @@ export async function scheduleMail(data: {
         body: data.body,
       },
       {
-        jobId: `send-email-${emailId}`, // job-id
+        jobId: `job-${emailId}`, // job-id
         delay: Math.max(delay, 0),
       }
     );

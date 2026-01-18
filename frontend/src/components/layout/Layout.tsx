@@ -77,7 +77,7 @@ export default function Layout({
             </Button>
 
           </Box>
-          <Box display="flex" alignItems="center" gap={1} sx={{ backgroundColor: "lightgrey", padding: "10px", borderRadius: "20px" }}>
+          <Box display="flex" alignItems="center" gap={1} sx={{ backgroundColor: "#F0F0F0", padding: "10px", borderRadius: "20px" }}>
             <Avatar src={avatar} />
             <Box>
               <Typography fontWeight={600}>{name}</Typography>
@@ -93,6 +93,7 @@ export default function Layout({
           variant="outlined"
           sx={{ mb: 2, borderRadius: 5 }}
           onClick={onCompose}
+          color="success"
         >
           Compose
         </Button>
