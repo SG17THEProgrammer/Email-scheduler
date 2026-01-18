@@ -15,8 +15,10 @@ import {
 } from "../../api/email.api";
 import { formatTime } from "../../utils/formatTime";
 import Header from "../layout/Header";
+import { useNavigate } from "react-router-dom";
 
 export default function EmailList({ type }: any) {
+  const navigate = useNavigate();
   const [emails, setEmails] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -34,9 +36,13 @@ export default function EmailList({ type }: any) {
     <>
     <Header></Header>
     <Box>
+    <br />
       {emails.map((email) => (
         <Box
           key={email.id}
+          sx={{ cursor: "pointer", "&:hover": { backgroundColor: "#f5f5f5" , paddingLeft:"10px"} }}
+          onClick={() => navigate(`/viewMail/${email.id}`)
+}
           // display="flex"
           // justifyContent="space-between"
           // alignItems="center"

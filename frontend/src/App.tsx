@@ -17,7 +17,7 @@ export default function App() {
         path="/"
         element={user ? <Dashboard /> : <Navigate to="/login" />}
       />
-      <Route path="/viewMail" element={<MailViewer />} />
+      <Route path="/viewMail/:id" element={<MailViewer />} />
     </Routes>
   );
 }

@@ -18,3 +18,11 @@ export async function getEmails(req: Request, res: Response) {
     );
   res.json(mails);
 }
+export async function getEmailById(req: Request, res: Response) {
+  const id = req.body.id;
+  const [mail] = await db.query(
+      "SELECT * FROM emails WHERE id=?",
+      [id]
+    );
+  res.json(mail);
+}

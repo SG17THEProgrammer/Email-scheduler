@@ -5,13 +5,17 @@ import {
   Avatar,
   IconButton,
   Divider,
-  Chip,
+  CircularProgress,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ImageIcon from "@mui/icons-material/Image";
+import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { getEmailById, getSenderById } from "../../api/email.api";
+import { useAuth } from "../../auth/useAuth";
 
 interface Attachment {
   name: string;
@@ -19,29 +23,97 @@ interface Attachment {
   url: string;
 }
 
-interface MailViewerProps {
-  mail: {
-    subject: string;
-    fromName: string;
-    fromEmail: string;
-    to: string;
-    date: string;
-    bodyHtml: string;
-    attachments?: Attachment[];
-  };
-  onBack: () => void;
+interface Mail {
+  id: string;
+  subject: string;
+  fromName: string;
+  fromEmail: string;
+  to: string;
+  date: string;
+  bodyHtml: string;
+  attachments?: Attachment[];
 }
 
-export default function MailViewer({ mail, onBack }: MailViewerProps) {
+export default function MailViewer() {
+    const {user } = useAuth();
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+
+  const [mail, setMail] = useState<Mail | null>(null);
+  const [sender, setSender] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!id) return;
+
+    async function fetchMail() {
+      try {
+        setLoading(true);
+        console.log(id);
+        const res = await getEmailById(id);
+        console.log(res);
+        setMail(res.data[0]);
+      } catch (err) {
+        setError("Failed to load email");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchMail();
+  }, [id]);
+
+  useEffect(() => {
+    if (!mail?.sender_id) return;
+
+    async function getSender() {
+      try {
+        setLoading(true);
+        console.log(mail?.sender_id);
+        const res = await getSenderById(mail?.sender_id);
+        console.log(res);
+        setSender(res.data[0]);
+      } catch (err) {
+        setError("Failed to load sender");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    getSender();
+  }, [mail?.sender_id]);
+
+  /* ------------------ STATES ------------------ */
+
+  if (loading) {
+    return (
+      <Box height="100%" display="flex" alignItems="center" justifyContent="center">
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error || !mail) {
+    return (
+      <Box p={4}>
+        <Typography color="error">{error || "Mail not found"}</Typography>
+      </Box>
+    );
+  }
+
+
+  /* ------------------ UI ------------------ */
+
   return (
-    <Box sx={{ height: "100%", backgroundColor: "#fff" }}>
+    <Box height="100%" bgcolor="#fff">
       {/* Header */}
       <Stack direction="row" alignItems="center" spacing={1} px={2} py={1}>
-        <IconButton onClick={onBack}>
+        <IconButton onClick={() => navigate(-1)}>
           <ArrowBackIcon />
         </IconButton>
 
-        <Typography fontWeight={600} flex={1}>
+        <Typography fontWeight={600} flex={1} noWrap>
           {mail.subject}
         </Typography>
 
@@ -59,43 +131,42 @@ export default function MailViewer({ mail, onBack }: MailViewerProps) {
       <Divider />
 
       {/* Sender Info */}
-      <Stack direction="row" spacing={2} px={3} py={2} alignItems="flex-start">
+      <Stack direction="row" spacing={2} px={3} py={2} sx={{margin:"0 100px"}}>
         <Avatar sx={{ bgcolor: "#22c55e" }}>
-          {mail.fromName.charAt(0)}
+          {sender?.name?.charAt(0).toUpperCase()}
         </Avatar>
 
         <Box flex={1}>
-          <Stack direction="row" alignItems="center" spacing={1}>
-            <Typography fontWeight={600}>{mail.fromName}</Typography>
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Typography fontWeight={600}>{sender?.name}</Typography>
             <Typography color="text.secondary">
-              &lt;{mail.fromEmail}&gt;
+              &lt;{sender?.email}&gt;
             </Typography>
           </Stack>
 
           <Typography variant="body2" color="text.secondary">
-            to {mail.to}
+            to {mail?.to_email.trim() === user?.user?.email.trim() ? "me" : mail?.to_email}
           </Typography>
         </Box>
 
         <Typography variant="body2" color="text.secondary">
-          {mail.date}
+          {mail.created_at}
         </Typography>
       </Stack>
 
       {/* Body */}
-      <Box px={6} py={2}>
-        {/* Rendered HTML body */}
+      <Box px={6} py={2} sx={{margin:"0 130px"}}>
         <Box
           sx={{
             "& p": { mb: 2 },
             "& strong": { fontWeight: 600 },
           }}
-          dangerouslySetInnerHTML={{ __html: mail.bodyHtml }}
+          dangerouslySetInnerHTML={{ __html: mail.body }}
         />
       </Box>
 
       {/* Attachments */}
-      {mail.attachments && mail.attachments.length > 0 && (
+      {mail.attachments?.length > 0 && (
         <Box px={6} pb={4}>
           <Stack direction="row" spacing={2}>
             {mail.attachments.map((file, idx) => (

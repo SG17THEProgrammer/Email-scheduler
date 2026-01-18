@@ -11,3 +11,11 @@ export function getScheduledEmails() {
 export function getSentEmails() {
   return api.get("/emails?status=sent");
 }
+
+export function getEmailById(id: string) {
+  return api.post(`/getEmailById`, { id });
+}
+
+export function getSenderById(id: string) {
+  return api.post(`/getSenderById`, { id });
+}
